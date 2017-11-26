@@ -30,6 +30,7 @@ public class SingletonManager<T> : MonoBehaviour where T : Component
         }
 		else
 		{
+			//當 Instance 非空的時候仍然調取了 Awake，這個時候要删除新生成的 gameObject
             Destroy(gameObject);
         }
     }

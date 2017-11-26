@@ -36,7 +36,7 @@ public abstract class Character : MonoBehaviour
 	{
         Destroy(this);
     }
-
+    
 	protected void overturn()
 	{
 		isFacingRight = !isFacingRight;

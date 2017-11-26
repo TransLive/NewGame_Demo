@@ -8,7 +8,7 @@ public class Player : Character {
 	}
 	void FixedUpdate()
 	{
-        move();
+        this.move();
     }
     protected override void move()
 	{
