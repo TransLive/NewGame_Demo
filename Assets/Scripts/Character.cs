@@ -8,10 +8,10 @@ public abstract class Character : MonoBehaviour
     protected Rigidbody2D rigidBody;
     protected Animator animator;
     //character property
-    public float attack;
+    public float attackPower;
 	public float critAttack;
 	public float critAttackRate;
-    public float attackCD;
+    public float attackInterval;
     public float attakRange;
     public float damage;
     public float defense;

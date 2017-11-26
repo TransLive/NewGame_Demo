@@ -2,28 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class gameManager : MonoBehaviour
+public class GameManager : SingletonManager<GameManager>
 {
-    public static gameManager instance;
-    Character _character;
+    Player player= null;
 
-    public Character character
+    protected override void Awake()
     {
-        get
-        {
-            return _character;
-        }
-
-        set
-        {
-            _character = value;
-        }
+        base.Awake();
     }
 
-    void Awake()
+    void start()
     {
-        instance = this;
+        player = new Player();
     }
-
-
 }

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class player : Character {
+public class Player : Character {
 	void Start()
 	{
 	}
+	void FixedUpdate()
+	{
+        move();
+    }
     protected override void move()
 	{
 		float move = Input.GetAxis("Horizontal");
