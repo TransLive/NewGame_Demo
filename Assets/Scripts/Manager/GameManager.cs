@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : SingletonManager<GameManager>
+public class GameManager : SingletonManager<GameManager> , IMessageShow
 {
-    Player player= null;
+    public Player player= null;
 
     protected override void Awake()
     {
