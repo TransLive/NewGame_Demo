@@ -6,12 +6,14 @@ public class Player : Character {
 	
     void Start()
 	{
-		groundCheckRadius = GetComponent<Collider2D>().bounds.size.y / 2;
+        groundCheckBox.x = GetComponent<CapsuleCollider2D>().bounds.size.x;
+        groundCheckBox.y = GetComponent<CapsuleCollider2D>().bounds.size.y;
     }
 	void Update()
 	{
 		this.jump();
-		animator.SetBool("isJump", isOnGround() ? true : false);
+        addAttack();
+        animator.SetBool("isJump", isOnGround() ? false : true);
         animator.SetBool("isOnGround", isOnGround());
     }
 	void FixedUpdate()
@@ -21,16 +23,16 @@ public class Player : Character {
     }
     protected override void move()
 	{
-		float move = Input.GetAxis("Horizontal");
-        if (rigidBody.velocity.y <= 0 && isOnGround() && Mathf.Abs(move) > 0)
+		float move = Input.GetAxisRaw("Horizontal");
+        if (rigidBody.velocity.y <= 0 && Mathf.Abs(move) > 0)
         {
-			this.PRINT(rigidBody.velocity.ToString());
+            //this.PRINT(rigidBody.velocity.ToString());
             rigidBody.velocity = new Vector2(move/Mathf.Abs(move) + move * maxSpeed, rigidBody.velocity.y);
 
             //速度方向為正且朝左的情況下或反之，翻轉sprite
             if (move > 0 && !isFacingRight || move < 0 && isFacingRight)
                 base.overturn();
-        }
+		}
     }
     protected override void jump()
 	{
@@ -41,8 +43,9 @@ public class Player : Character {
 	}
     protected override void addAttack()
 	{
-
-	}
+		if(Input.GetKey("v"))
+			animator.SetTrigger("attacking");
+    }
     protected override void addDamage()
 	{
 

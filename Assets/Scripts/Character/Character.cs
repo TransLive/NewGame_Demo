@@ -21,6 +21,12 @@ public abstract class Character : MonoBehaviour,IMessageShow
     public float minSpeed;
     public float speed;
     public float jumpForce;
+    protected struct GroundCheckBoxSize
+    {
+        public float x;
+        public float y;
+    }
+    protected GroundCheckBoxSize groundCheckBox;
     protected float groundCheckRadius;
     protected bool isFacingRight;
     public LayerMask groundLayer;
@@ -48,11 +54,10 @@ public abstract class Character : MonoBehaviour,IMessageShow
 	}
     protected bool isOnGround()
     {
-        //bool onground = Physics2D.OverlapCircle(transform.position, groundCheckRadius+0.02f, groundLayer);
-        var hit = Physics2D.Raycast(transform.position, -Vector2.up,groundCheckRadius+0.02f,groundLayer);
+        bool onground = Physics2D.OverlapBox(transform.position, new Vector2(groundCheckBox.x /10, groundCheckBox.y), 0f, groundLayer);
 #if DEBUG
-        Debug.DrawRay(transform.position, -Vector2.up, Color.green, groundCheckRadius + 0.02f);
+        Debug.DrawRay(transform.position, -Vector2.up * (groundCheckRadius+0.02f), Color.green, 0.1f);
 #endif
-        return hit.collider == null ? false : true;
+        return onground;// == null ? false : true;
     }
 }
