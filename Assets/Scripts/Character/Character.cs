@@ -17,6 +17,8 @@ public abstract class Character : MonoBehaviour,IMessageShow
     public float defense;
     public float maxHealth;
     public float currentHealth;
+    public float maxEnergy;
+    public float currentEnergy;
     public float maxSpeed;
     public float minSpeed;
     public float speed;
@@ -52,12 +54,14 @@ public abstract class Character : MonoBehaviour,IMessageShow
 		theScale.x *= -1;
 		transform.localScale = theScale;
 	}
-    protected bool isOnGround()
+    protected virtual bool isOnGround()
     {
-        bool onground = Physics2D.OverlapBox(transform.position, new Vector2(groundCheckBox.x /10, groundCheckBox.y), 0f, groundLayer);
+        //bool onground = Physics2D.OverlapBox(transform.position, new Vector2(groundCheckBox.x /10, groundCheckBox.y), 0f, groundLayer);
+        var hit = Physics2D.Raycast(transform.position, -Vector2.up, groundCheckBox.x+0.02f, groundLayer);
+        //var hitter = Physics2D.BoxCast(transform.position,new Vector2(groundCheckBox.x,groundCheckBox.y),)
 #if DEBUG
-        Debug.DrawRay(transform.position, -Vector2.up * (groundCheckRadius+0.02f), Color.green, 0.1f);
+        Debug.DrawRay(transform.position, -Vector2.up * (groundCheckBox.x+0.02f), Color.green, 0.1f);
 #endif
-        return onground;// == null ? false : true;
+        return hit.collider == null ? false : true; //onground;
     }
 }

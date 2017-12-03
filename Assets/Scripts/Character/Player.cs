@@ -6,37 +6,29 @@ public class Player : Character {
 	
     void Start()
 	{
-        groundCheckBox.x = GetComponent<CapsuleCollider2D>().bounds.size.x;
-        groundCheckBox.y = GetComponent<CapsuleCollider2D>().bounds.size.y;
+        groundCheckBox.x = GetComponent<BoxCollider2D>().bounds.size.x;
+        groundCheckBox.y = GetComponent<BoxCollider2D>().bounds.size.y;
     }
 	void Update()
 	{
-		this.jump();
         addAttack();
-        animator.SetBool("isJump", isOnGround() ? false : true);
-        animator.SetBool("isOnGround", isOnGround());
+        setAnimator();
     }
 	void FixedUpdate()
 	{
-        this.move();
-		animator.SetFloat("playerSpeed", Mathf.Abs(rigidBody.velocity.x));
+        jump();
+        move();
     }
     protected override void move()
 	{
-		float move = Input.GetAxisRaw("Horizontal");
-        if (rigidBody.velocity.y <= 0 && Mathf.Abs(move) > 0)
-        {
-            //this.PRINT(rigidBody.velocity.ToString());
-            rigidBody.velocity = new Vector2(move/Mathf.Abs(move) + move * maxSpeed, rigidBody.velocity.y);
-
-            //速度方向為正且朝左的情況下或反之，翻轉sprite
-            if (move > 0 && !isFacingRight || move < 0 && isFacingRight)
-                base.overturn();
-		}
+		float move = Input.GetAxis("Horizontal");
+        if (move > 0 && !isFacingRight || move < 0 && isFacingRight && isOnGround())
+            base.overturn();
+        rigidBody.velocity = Mathf.Abs(move) > 0 ? new Vector2(move * maxSpeed, rigidBody.velocity.y): rigidBody.velocity;
     }
     protected override void jump()
 	{
-		if(Input.GetKey("space") && rigidBody.velocity.y <= 0 && isOnGround())
+		if(Input.GetKey("space") && isOnGround()) 
 		{
             rigidBody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         }
@@ -50,4 +42,24 @@ public class Player : Character {
 	{
 
 	}
+
+    protected override bool isOnGround()
+    {
+        var RaycastHit = Physics2D.BoxCast(
+        origin: transform.position,
+        size: new Vector2(groundCheckBox.x - 0.1f,groundCheckBox.y),
+        angle: 0f,
+        direction: Vector2.down,
+        distance: 0.01f,
+        layerMask: this.groundLayer
+        );
+        return RaycastHit;
+    }
+
+    void setAnimator()
+    {
+        animator.SetBool("isJump", isOnGround() ? false : true);
+        animator.SetBool("isOnGround", isOnGround());
+        animator.SetFloat("playerSpeed", Mathf.Abs(rigidBody.velocity.x));
+    }
 }
