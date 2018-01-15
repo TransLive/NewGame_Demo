@@ -2,42 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public abstract class Character : MonoBehaviour,IMessageShow
 {
-    //unity component
+    
+    public CharacterData charData;
+
+    #region gameplay data
     protected Rigidbody2D rigidBody;
     public Animator animator;
-    //character property
-    public float attackPower;
-	public float critAttack;
-	public float critAttackRate;
-    public float attackInterval;
-    public float attakRange;
-    public float damage;
-    public float defense;
-    public float maxHealth;
-    public float currentHealth;
-    public float maxEnergy;
-    public float currentEnergy;
-    public float maxSpeed;
-    public float minSpeed;
-    public float speed;
-    public float jumpForce;
+
     protected struct GroundCheckBoxSize
     {
         public float x;
         public float y;
     }
+
+    protected struct GroundCheckPositions
+    {
+        public Vector2 leftPosition;
+        public Vector2 rightPositon;
+    }
     protected GroundCheckBoxSize groundCheckBox;
+    protected GroundCheckPositions groundCheckPositions;
     protected float groundCheckRadius;
     protected bool isFacingRight;
     public LayerMask groundLayer;
-    
-    //character action
+    protected Collider2D _collider;
+
+    #endregion
     protected abstract void move();
     protected abstract void jump();
     protected abstract void addAttack();
     protected abstract void addDamage();
+    protected abstract void overturn();
 	void Awake()
 	{
         rigidBody = GetComponent<Rigidbody2D>();
@@ -46,22 +44,19 @@ public abstract class Character : MonoBehaviour,IMessageShow
     public virtual void dead()
 	{
     }
-    
-	protected void overturn()
-	{
-		isFacingRight = !isFacingRight;
-		Vector3 theScale = transform.localScale;
-		theScale.x *= -1;
-		transform.localScale = theScale;
-	}
+
+    //Vector2 checkPosition;
     protected virtual bool isOnGround()
     {
-        //bool onground = Physics2D.OverlapBox(transform.position, new Vector2(groundCheckBox.x /10, groundCheckBox.y), 0f, groundLayer);
-        var hit = Physics2D.Raycast(transform.position, -Vector2.up, groundCheckBox.x+0.02f, groundLayer);
-        //var hitter = Physics2D.BoxCast(transform.position,new Vector2(groundCheckBox.x,groundCheckBox.y),)
-#if DEBUG
-        Debug.DrawRay(transform.position, -Vector2.up * (groundCheckBox.x+0.02f), Color.green, 0.1f);
-#endif
-        return hit.collider == null ? false : true; //onground;
+        groundCheckPositions.rightPositon = new Vector2(transform.position.x + groundCheckBox.x / 2, transform.position.y);
+        groundCheckPositions.leftPosition = new Vector2(transform.position.x - groundCheckBox.x / 2, transform.position.y);
+
+        var middleHit = Physics2D.Raycast(transform.position, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
+        var leftHit = Physics2D.Raycast(groundCheckPositions.leftPosition, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
+        var rightHit = Physics2D.Raycast(groundCheckPositions.rightPositon, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
+
+        //Debug.DrawRay(groundCheckPositions.leftPosition, -Vector2.up * (groundCheckBox.y+0.02f), Color.green, 0.1f);
+
+        return middleHit.collider == null && leftHit.collider == null && rightHit.collider == null ? false : true;
     }
 }

@@ -13,13 +13,13 @@ public class PlayerHealthBar : MonoBehaviour {
     void Start()
 	{
         
-        redHealthBar.maxValue = gameManager.player.maxHealth;
+        redHealthBar.maxValue = gameManager.player.charData.maxHealth;
 		yellowHealthBar.maxValue = redHealthBar.maxValue;
     }
 
 	void Update()
 	{
-        redHealthBar.value = gameManager.player.currentHealth;
+        redHealthBar.value = gameManager.player.charData.currentHealth;
 		yellowHealthBar.value = redHealthBar.value < yellowHealthBar.value ? 
 		Mathf.Lerp(yellowHealthBar.value, redHealthBar.value, deYellowBarSpeed) : redHealthBar.value;
     }
