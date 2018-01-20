@@ -4,6 +4,8 @@ using UnityEngine;
 
 [System.Serializable]
 public class CharacterData {
+    public long id;
+    public int name;
     public float maxHealth;
     public float currentHealth;
     public float maxMagic;

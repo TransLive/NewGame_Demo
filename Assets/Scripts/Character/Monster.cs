@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class Monster : Character {
 
-    public float patrolRange;
-    public Vector3 patrolDirect;
+    public float patrolRadius;
+    public Vector2 patrolDirect;
+    private Vector2 patrolStartPoint;
     public float chaseSpeed;
+    public GameObject objDetector;
+
+    void detectorInit()
+    {
+        objDetector.transform.parent = this.transform;
+    }
+
+    //    private Detector detector;
     void Start()
 	{
+        patrolStartPoint = transform.position;
         isFacingRight = Random.value > 0.5f;
-        groundCheckBox.x = GetComponent<BoxCollider2D>().bounds.size.x;
-        Debug.Log(groundCheckBox.x);
-        groundCheckBox.y = GetComponent<BoxCollider2D>().bounds.size.y;
-        _collider = GetComponent<BoxCollider2D>();
+        //mainCollider = GetComponent<BoxCollider2D>();
+        mainCheckBox.x = base.mainCollider.bounds.size.x;
+        mainCheckBox.y = base.mainCollider.bounds.size.y;
     }
 	void Update()
 	{
@@ -36,6 +45,7 @@ public class Monster : Character {
         t += Time.deltaTime;
         if (shoudOverturn() && t > otTime)
         {
+            //Debug.Log("haha");
             overturn();
             t = 0;
         }
@@ -53,13 +63,13 @@ public class Monster : Character {
 
 	}
 
-    protected void chase()
+    protected virtual void chase()
     {
-        if(playerInPatrolRange())
+        if(isPlayerInPatrolRange())
         {
         }
     }
-    private bool playerInPatrolRange()
+    private bool isPlayerInPatrolRange()
     {
         return false;
     }
@@ -68,27 +78,44 @@ public class Monster : Character {
     {
         //overturn 時機:
         //1.碰到墻 2.碰到懸崖 3.player 被發現時位於反方向 4.追著玩家打的時候
-        
             isFacingRight = !isFacingRight;
             patrolDirect = -patrolDirect;
             Vector3 theScale = transform.localScale;
             theScale.x *= -1;
             transform.localScale = theScale;
-            Debug.Log("haha");
     }
 
     private bool shoudOverturn()
     {
-        var hit = Physics2D.Raycast(transform.position, Vector2.right, groundCheckBox.x/2 + 0.01f, groundLayer);
-
-        return hit.collider == null ? false : true;
+        return (!isInPatrolRange() || isCollideToGround()) ? true : false;
     }
     void OnCollisionEnter2D(Collision2D other)
     {
         //忽略玩家碰撞体
         if(other.gameObject.tag == "Player")
         {
-            Physics2D.IgnoreCollision(_collider, other.collider, true);
+            Physics2D.IgnoreCollision(mainCollider, other.collider, true);
         }
     }
+
+    private bool isInPatrolRange()
+    {
+        if (Mathf.Abs(transform.position.x - patrolStartPoint.x) >= patrolRadius)
+            return false;
+        else return true;
+    }
+
+    private bool isCollideToGround()
+    {
+        var hitRight = Physics2D.Raycast(transform.position, Vector2.right, mainCheckBox.x/2 + 0.01f, groundLayer);
+        var hitLeft = Physics2D.Raycast(transform.position, Vector2.left, mainCheckBox.x/2 + 0.01f, groundLayer);
+        return (hitRight.collider == null && hitLeft.collider == null) ? false : true;
+    }
+
+    public void RelayOnTriggerEnter(Collider2D other)
+    {
+        Debug.Log("haha");
+    }
+
+    
 }

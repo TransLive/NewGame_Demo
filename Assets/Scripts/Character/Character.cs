@@ -7,6 +7,7 @@ public abstract class Character : MonoBehaviour,IMessageShow
 {
     
     public CharacterData charData;
+    protected Items.Weapon holdingWeapon;
 
     #region gameplay data
     protected Rigidbody2D rigidBody;
@@ -23,13 +24,20 @@ public abstract class Character : MonoBehaviour,IMessageShow
         public Vector2 leftPosition;
         public Vector2 rightPositon;
     }
-    protected GroundCheckBoxSize groundCheckBox;
+    protected GroundCheckBoxSize mainCheckBox;
+    
     protected GroundCheckPositions groundCheckPositions;
     protected float groundCheckRadius;
     protected bool isFacingRight;
     public LayerMask groundLayer;
-    protected Collider2D _collider;
-
+    private Collider2D _mainCollider;
+    protected Collider2D mainCollider{
+        get { 
+            if(_mainCollider == null)
+                _mainCollider = GetComponent<BoxCollider2D>();
+            return _mainCollider; }
+        set { _mainCollider = value;}
+    }
     #endregion
     protected abstract void move();
     protected abstract void jump();
@@ -41,19 +49,19 @@ public abstract class Character : MonoBehaviour,IMessageShow
         rigidBody = GetComponent<Rigidbody2D>();
         isFacingRight = transform.localScale.x > 0 ? true : false;
     }
-    public virtual void dead()
+    protected virtual void dead()
 	{
     }
 
     //Vector2 checkPosition;
     protected virtual bool isOnGround()
     {
-        groundCheckPositions.rightPositon = new Vector2(transform.position.x + groundCheckBox.x / 2, transform.position.y);
-        groundCheckPositions.leftPosition = new Vector2(transform.position.x - groundCheckBox.x / 2, transform.position.y);
+        groundCheckPositions.rightPositon = new Vector2(transform.position.x + mainCheckBox.x / 2, transform.position.y);
+        groundCheckPositions.leftPosition = new Vector2(transform.position.x - mainCheckBox.x / 2, transform.position.y);
 
-        var middleHit = Physics2D.Raycast(transform.position, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
-        var leftHit = Physics2D.Raycast(groundCheckPositions.leftPosition, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
-        var rightHit = Physics2D.Raycast(groundCheckPositions.rightPositon, -Vector2.up, groundCheckBox.y/2+0.1f, groundLayer);
+        var middleHit = Physics2D.Raycast(transform.position, -Vector2.up, mainCheckBox.y/2+0.1f, groundLayer);
+        var leftHit = Physics2D.Raycast(groundCheckPositions.leftPosition, -Vector2.up, mainCheckBox.y/2+0.1f, groundLayer);
+        var rightHit = Physics2D.Raycast(groundCheckPositions.rightPositon, -Vector2.up, mainCheckBox.y/2+0.1f, groundLayer);
 
         //Debug.DrawRay(groundCheckPositions.leftPosition, -Vector2.up * (groundCheckBox.y+0.02f), Color.green, 0.1f);
 

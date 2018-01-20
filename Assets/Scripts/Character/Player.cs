@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Player : Character {
-	
+
     void Start()
 	{
-        _collider = GetComponent<BoxCollider2D>();
-        groundCheckBox.x = _collider.bounds.size.x;
-        groundCheckBox.y = _collider.bounds.size.y;
+        mainCheckBox.x = base.mainCollider.bounds.size.x;
+        mainCheckBox.y = base.mainCollider.bounds.size.y;
+
+        holdingWeapon = GetComponentInParent<Items.Weapon>();
     }
 	void Update()
 	{
@@ -25,7 +25,6 @@ public class Player : Character {
 		float move = Input.GetAxis("Horizontal");
         if (base.isOnGround())
         {
-            Debug.Log("haha");
             if (move > 0 && !isFacingRight || move < 0 && isFacingRight)
             {
                 overturn();
@@ -45,8 +44,11 @@ public class Player : Character {
 	}
     protected override void addAttack()
 	{
-		if(Input.GetKey("v"))
-			animator.SetTrigger("attacking");
+        if (Input.GetKey("v"))
+        {
+            animator.SetTrigger("attacking");
+            
+        }
     }
     protected override void addDamage()
 	{
@@ -58,7 +60,7 @@ public class Player : Character {
     {
         var RaycastHit = Physics2D.BoxCast(
         origin: transform.position,
-        size: new Vector2(groundCheckBox.x - 0.1f,groundCheckBox.y),
+        size: new Vector2(mainCheckBox.x - 0.1f,mainCheckBox.y),
         angle: 0f,
         direction: Vector2.down,
         distance: 0.01f,
@@ -82,4 +84,3 @@ public class Player : Character {
 		transform.localScale = theScale;
 	}
 }
-
