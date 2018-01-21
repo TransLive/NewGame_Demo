@@ -18,9 +18,11 @@ public class Monster : Character {
     //    private Detector detector;
     void Start()
 	{
+        base.Start();
         patrolStartPoint = transform.position;
-        isFacingRight = Random.value > 0.5f;
-        //mainCollider = GetComponent<BoxCollider2D>();
+        isFacingRight = Random.value > 0.5f ? true : false;
+        if (!isFacingRight) overturn();
+
         mainCheckBox.x = base.mainCollider.bounds.size.x;
         mainCheckBox.y = base.mainCollider.bounds.size.y;
     }
@@ -46,8 +48,8 @@ public class Monster : Character {
         if (shoudOverturn() && t > otTime)
         {
             //Debug.Log("haha");
-            overturn();
             t = 0;
+            overturn();
         }
     }
 	protected override void jump()
@@ -55,10 +57,6 @@ public class Monster : Character {
 
 	}
     protected override void addAttack()
-	{
-
-	}
-    protected override void addDamage()
 	{
 
 	}
@@ -109,13 +107,11 @@ public class Monster : Character {
     {
         var hitRight = Physics2D.Raycast(transform.position, Vector2.right, mainCheckBox.x/2 + 0.01f, groundLayer);
         var hitLeft = Physics2D.Raycast(transform.position, Vector2.left, mainCheckBox.x/2 + 0.01f, groundLayer);
+        
         return (hitRight.collider == null && hitLeft.collider == null) ? false : true;
     }
 
-    public void RelayOnTriggerEnter(Collider2D other)
+    public override void RelayOnTriggerEnter(Collider2D other)
     {
-        Debug.Log("haha");
     }
-
-    
 }

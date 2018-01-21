@@ -28,7 +28,7 @@ public abstract class Character : MonoBehaviour,IMessageShow
     
     protected GroundCheckPositions groundCheckPositions;
     protected float groundCheckRadius;
-    protected bool isFacingRight;
+    public bool isFacingRight;
     public LayerMask groundLayer;
     private Collider2D _mainCollider;
     protected Collider2D mainCollider{
@@ -42,15 +42,22 @@ public abstract class Character : MonoBehaviour,IMessageShow
     protected abstract void move();
     protected abstract void jump();
     protected abstract void addAttack();
-    protected abstract void addDamage();
+    public virtual void addDamage(int damge)
+    {
+        charData.currentHealth -= damge;
+    }
     protected abstract void overturn();
-	void Awake()
+    public void Start()
 	{
         rigidBody = GetComponent<Rigidbody2D>();
+        groundLayer = 1<<LayerMask.NameToLayer("Ground");
         isFacingRight = transform.localScale.x > 0 ? true : false;
+        
+        Debug.Log(isFacingRight);
     }
     protected virtual void dead()
-	{
+    {
+
     }
 
     //Vector2 checkPosition;
@@ -67,4 +74,7 @@ public abstract class Character : MonoBehaviour,IMessageShow
 
         return middleHit.collider == null && leftHit.collider == null && rightHit.collider == null ? false : true;
     }
+
+    public abstract void RelayOnTriggerEnter(Collider2D other);
+
 }

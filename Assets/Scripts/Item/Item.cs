@@ -7,6 +7,5 @@ namespace Items
     {
         public long id;
         public string _name;
-        // Use this for initialization
     }
 }

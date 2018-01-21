@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 public class Player : Character {
+    
+    struct totalAttack
+    {
+        
+    }
 
     void Start()
 	{
+        base.Start();
         mainCheckBox.x = base.mainCollider.bounds.size.x;
         mainCheckBox.y = base.mainCollider.bounds.size.y;
-
-        holdingWeapon = GetComponentInParent<Items.Weapon>();
+        holdingWeapon = GetComponentInChildren<Items.Weapon>();
     }
 	void Update()
 	{
         addAttack();
         setAnimator();
+        
     }
 	void FixedUpdate()
 	{
@@ -31,9 +37,6 @@ public class Player : Character {
             }
             rigidBody.velocity = Mathf.Abs(move) > 0 ? new Vector2(move * charData.maxSpeed, rigidBody.velocity.y): rigidBody.velocity;
         }
-
-
-        
     }
     protected override void jump()
 	{
@@ -42,18 +45,22 @@ public class Player : Character {
             rigidBody.AddForce(new Vector2(0, charData.jumpForce), ForceMode2D.Impulse);
         }
 	}
+    float t = 0;
     protected override void addAttack()
 	{
-        if (Input.GetKey("v"))
+        if (Input.GetKeyDown("v") && (Time.time - t) >= charData.attackCd)
         {
+            t = Time.time;
             animator.SetTrigger("attacking");
-            
+            Debug.Log("haha");
+            holdingWeapon.attackBox.enabled = true;
         }
     }
-    protected override void addDamage()
-	{
 
-	}
+    protected override void dead()
+    {
+
+    }
 
     //射線盒檢測
     protected override bool isOnGround()
@@ -83,4 +90,12 @@ public class Player : Character {
 		theScale.x *= -1;
 		transform.localScale = theScale;
 	}
+
+    public override void RelayOnTriggerEnter(Collider2D other)
+    {
+        if (other.gameObject.tag == "Enemy")
+        {
+            (other.transform.gameObject.GetComponent<Character>() as Monster).addDamage(charData.attackPower + holdingWeapon.attackPower);
+        }
+    }
 }

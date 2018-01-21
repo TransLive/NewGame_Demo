@@ -10,7 +10,7 @@ public class CharacterData {
     public float currentHealth;
     public float maxMagic;
     public float currentMagic;
-    public float attackPower;
+    public int attackPower;
 	public float critAttack;
 	public float critAttackRate;
     public float attackCd;
